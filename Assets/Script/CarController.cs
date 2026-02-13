@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class CarController : MonoBehaviour
+public class CarController : BaseCar
 {
     private const string EMISSION_VARIABLE = "_EmissionColor";
 
@@ -11,32 +11,16 @@ public class CarController : MonoBehaviour
     private const string ACCELERATE_INPUT = "Accelerate";
     private const string STEER_INPUT = "Steer";
     private const string BRAKE_INPUT = "Brake";
-    [SerializeField] private WheelCollider wheelFR, wheelFL, wheelBR, wheelBL;
-    private Transform wheelFRVisual, wheelFLVisual, wheelBRVisual, wheelBLVisual;
-    [SerializeField] private float parMotor;
-    [SerializeField] private float maxWheelRotation;
-    [SerializeField] private float brakeForce;
-    private MeshRenderer meshRenderer;
 
     private PlayerInput playerInput;
     private float acceleration;
     private float steer;
     private float brake;
 
-    private void Awake()
+    protected override void Awake()
     {
-        meshRenderer = GetComponent<MeshRenderer>();
-
+        base.Awake();
         parMotor = -parMotor;
-        SetWheelVisuals(wheelFR, ref wheelFRVisual);
-        SetWheelVisuals(wheelFL, ref wheelFLVisual);
-        SetWheelVisuals(wheelBR, ref wheelBRVisual);
-        SetWheelVisuals(wheelBL, ref wheelBLVisual);
-    }
-
-    private void SetWheelVisuals(WheelCollider wheelCollider, ref Transform wheelVisual)
-    {
-        wheelVisual = wheelCollider.transform.GetChild(0);
     }
 
     private void Start()
@@ -78,12 +62,5 @@ public class CarController : MonoBehaviour
         SetWheelPositionAndRotation(wheelBL, wheelBLVisual);
         SetWheelPositionAndRotation(wheelFR, wheelFRVisual);
         SetWheelPositionAndRotation(wheelFL, wheelFLVisual);
-    }
-
-    private void SetWheelPositionAndRotation(WheelCollider wheelCollider, Transform wheelVisual)
-    {
-        wheelCollider.GetWorldPose(out var wheelPosition, out var wheelRotation);
-        wheelVisual.transform.position = wheelPosition;
-        wheelVisual.transform.rotation = wheelRotation;
     }
 }
