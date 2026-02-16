@@ -1,4 +1,3 @@
-using System.Net.Mime;
 using UnityEngine;
 
 public class AICar : BaseCar
@@ -6,12 +5,14 @@ public class AICar : BaseCar
     [SerializeField] private PathCars path;
     [SerializeField] private float minimumDistanceFromTarget;
     private int currentNodeTarget;
+    private BrakeZone brakeZone;
 
     protected override void Awake()
     {
         base.Awake();
         parMotor = -parMotor;
         currentNodeTarget = 0;
+        ToggleBrakeLights(0);
     }
 
     private void FixedUpdate()
@@ -21,7 +22,7 @@ public class AICar : BaseCar
 
         var direction = CheckTargetNode();
         SetWheelAngle(direction);
-        
+
         SetWheelPositionAndRotation(wheelBR, wheelBRVisual);
         SetWheelPositionAndRotation(wheelBL, wheelBLVisual);
         SetWheelPositionAndRotation(wheelFR, wheelFRVisual);
@@ -32,7 +33,7 @@ public class AICar : BaseCar
     {
         var rotation = Quaternion.FromToRotation(transform.forward, direction);
         Debug.Log(rotation);
-        
+
         wheelFR.steerAngle = rotation.eulerAngles.y;
         wheelFL.steerAngle = rotation.eulerAngles.y;
     }
@@ -48,7 +49,43 @@ public class AICar : BaseCar
             if (currentNodeTarget >= path.nodes.Count)
                 currentNodeTarget = 0;
         }
-        
+
         return direction;
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.TryGetComponent(out brakeZone))
+        {
+            if (brakeZone.maxSpeed < rb.linearVelocity.magnitude * 3.6f)
+            {
+                ToggleBrakeLights(brakeForce);
+                wheelBL.brakeTorque = brakeForce;
+                wheelBR.brakeTorque = brakeForce;
+                wheelFL.brakeTorque = brakeForce;
+                wheelFR.brakeTorque = brakeForce;
+            }
+            else
+            {
+                ToggleBrakeLights(0);
+                wheelBL.brakeTorque = 0;
+                wheelBR.brakeTorque = 0;
+                wheelFL.brakeTorque = 0;
+                wheelFR.brakeTorque = 0;
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.TryGetComponent<BrakeZone>(out _))
+        {
+            brakeZone = null;
+            ToggleBrakeLights(0);
+            wheelBL.brakeTorque = 0;
+            wheelBR.brakeTorque = 0;
+            wheelFL.brakeTorque = 0;
+            wheelFR.brakeTorque = 0;
+        }
     }
 }

@@ -4,10 +4,6 @@ using UnityEngine.InputSystem;
 
 public class CarController : BaseCar
 {
-    private const string EMISSION_VARIABLE = "_EmissionColor";
-
-    private const int BRAKE_LIGHTS_MATERIAL_INDEX = 2;
-
     private const string ACCELERATE_INPUT = "Accelerate";
     private const string STEER_INPUT = "Steer";
     private const string BRAKE_INPUT = "Brake";
@@ -34,15 +30,7 @@ public class CarController : BaseCar
         steer = playerInput.actions[STEER_INPUT].ReadValue<float>();
         brake = playerInput.actions[BRAKE_INPUT].ReadValue<float>();
 
-        var brakeLightMaterial = meshRenderer.materials[BRAKE_LIGHTS_MATERIAL_INDEX];
-        if (brake > 0)
-        {
-            brakeLightMaterial.SetColor(EMISSION_VARIABLE, Color.red);
-        }
-        else
-        {
-            brakeLightMaterial.SetColor(EMISSION_VARIABLE, Color.black);
-        }
+        ToggleBrakeLights(brake);
     }
 
     private void FixedUpdate()

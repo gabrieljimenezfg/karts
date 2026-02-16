@@ -3,21 +3,40 @@ using UnityEngine;
 
 public class BaseCar : MonoBehaviour
 {
+    private const string EMISSION_VARIABLE = "_EmissionColor";
+    private const int BRAKE_LIGHTS_MATERIAL_INDEX = 2;
+    
     [SerializeField] protected WheelCollider wheelFR, wheelFL, wheelBR, wheelBL;
     protected Transform wheelFRVisual, wheelFLVisual, wheelBRVisual, wheelBLVisual;
     [SerializeField] protected float parMotor;
     [SerializeField] protected float maxWheelRotation;
     [SerializeField] protected float brakeForce;
     protected MeshRenderer meshRenderer;
+    protected Rigidbody rb;
 
     protected virtual void Awake()
     {
+        rb = GetComponent<Rigidbody>();
         meshRenderer = GetComponent<MeshRenderer>();
         SetWheelVisuals(wheelFR, ref wheelFRVisual);
         SetWheelVisuals(wheelFL, ref wheelFLVisual);
         SetWheelVisuals(wheelBR, ref wheelBRVisual);
         SetWheelVisuals(wheelBL, ref wheelBLVisual);
     }
+    
+    protected void ToggleBrakeLights(float brake)
+    {
+        var brakeLightMaterial = meshRenderer.materials[BRAKE_LIGHTS_MATERIAL_INDEX];
+        if (brake > 0)
+        {
+            brakeLightMaterial.SetColor(EMISSION_VARIABLE, Color.red);
+        }
+        else
+        {
+            brakeLightMaterial.SetColor(EMISSION_VARIABLE, Color.black);
+        }
+    }
+
 
     private void SetWheelVisuals(WheelCollider wheelCollider, ref Transform wheelVisual)
     {
