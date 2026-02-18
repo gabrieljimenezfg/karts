@@ -35,10 +35,11 @@ public class AICar : BaseCar
 
         foreach (var sensor in sensors)
         {
+            RaycastHit hit;
             var ray = new Ray(sensor.transform.position, sensor.transform.forward);
             Debug.DrawRay(ray.origin, ray.direction * sensorsDistance, Color.red, 0.1f);
 
-            if (!Physics.Raycast(ray, sensorsDistance)) continue;
+            if (!Physics.Raycast(ray, out hit, sensorsDistance)) continue;
 
             switch (sensor.sensorPosition)
             {
@@ -66,6 +67,11 @@ public class AICar : BaseCar
                     break;
 
                 case SensorPosition.Front:
+                    Debug.DrawRay(hit.transform.position, hit.normal * 10f, Color.green);
+                    var rotation = Quaternion.FromToRotation(transform.forward, hit.normal);
+                    var eulerRotation = rotation.eulerAngles;
+                    wheelRotationMultiplier = eulerRotation.y > 180 ? 1 : -1;
+                    avoiding = true;
                     break;
             }
         }
