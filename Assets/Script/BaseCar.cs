@@ -23,6 +23,18 @@ public class BaseCar : MonoBehaviour
         SetWheelVisuals(wheelBR, ref wheelBRVisual);
         SetWheelVisuals(wheelBL, ref wheelBLVisual);
     }
+
+    protected void SetSteeringAngle(float angle)
+    {
+        wheelFR.steerAngle = angle;
+        wheelFL.steerAngle = angle;
+    }
+
+    protected void SetMotorTorque(float torque)
+    {
+        wheelBL.motorTorque = torque;
+        wheelBR.motorTorque = torque;
+    }
     
     protected void ToggleBrakeLights(float brake)
     {
@@ -49,6 +61,14 @@ public class BaseCar : MonoBehaviour
         SetWheelPositionAndRotation(wheelBL, wheelBLVisual);
         SetWheelPositionAndRotation(wheelFR, wheelFRVisual);
         SetWheelPositionAndRotation(wheelFL, wheelFLVisual);
+    }
+
+    protected void SetWheelsBrakeTorque(float brakingApplied)
+    {
+        wheelBL.brakeTorque = brakingApplied;
+        wheelBR.brakeTorque = brakingApplied;
+        wheelFL.brakeTorque = brakingApplied;
+        wheelFR.brakeTorque = brakingApplied;
     }
     
     private void SetWheelPositionAndRotation(WheelCollider wheelCollider, Transform wheelVisual)

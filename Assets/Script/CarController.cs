@@ -35,17 +35,9 @@ public class CarController : BaseCar
 
     private void FixedUpdate()
     {
-        wheelBL.motorTorque = parMotor * acceleration;
-        wheelBR.motorTorque = parMotor * acceleration;
-
-        wheelFL.steerAngle = maxWheelRotation * steer;
-        wheelFR.steerAngle = maxWheelRotation * steer;
-
-        wheelFR.brakeTorque = brakeForce * brake;
-        wheelFL.brakeTorque = brakeForce * brake;
-        wheelBR.brakeTorque = brakeForce * brake;
-        wheelBL.brakeTorque = brakeForce * brake;
-
+        SetMotorTorque(parMotor * acceleration);
+        SetSteeringAngle(maxWheelRotation * steer);
+        SetWheelsBrakeTorque(brakeForce * brake);
         SetVisualWheelsPositionAndRotation();
     }
 }

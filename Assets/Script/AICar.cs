@@ -21,9 +21,7 @@ public class AICar : BaseCar
 
     private void FixedUpdate()
     {
-        wheelBL.motorTorque = parMotor;
-        wheelBR.motorTorque = parMotor;
-
+        SetMotorTorque(parMotor);
         var direction = CheckTargetNode();
         SetSteeringAngleFromDirection(direction);
         CheckSensors();
@@ -45,19 +43,23 @@ public class AICar : BaseCar
             switch (sensor.sensorPosition)
             {
                 case SensorPosition.FrontLeft:
+                    Debug.Log("Front left");
                     wheelRotationMultiplier = 1;
                     avoiding = true;
                     break;
                 case SensorPosition.FrontLeftDiagonal:
+                    Debug.Log("Front left diag");
                     if (avoiding) continue;
                     avoiding = true;
                     wheelRotationMultiplier = 0.6f;
                     break;
                 case SensorPosition.FrontRight:
+                    Debug.Log("Front right");
                     wheelRotationMultiplier = -1;
                     avoiding = true;
                     break;
                 case SensorPosition.FrontRightDiagonal:
+                    Debug.Log("Front right diag");
                     if (avoiding) continue;
                     avoiding = true;
                     wheelRotationMultiplier = -0.6f;
@@ -72,12 +74,6 @@ public class AICar : BaseCar
         {
             SetSteeringAngle(maxWheelRotation * wheelRotationMultiplier);
         }
-    }
-
-    private void SetSteeringAngle(float angle)
-    {
-        wheelFR.steerAngle = angle;
-        wheelFL.steerAngle = angle;
     }
 
     private void SetSteeringAngleFromDirection(Vector3 direction)
@@ -110,18 +106,12 @@ public class AICar : BaseCar
             if (brakeZone.maxSpeed < rb.linearVelocity.magnitude * 3.6f)
             {
                 ToggleBrakeLights(brakeForce);
-                wheelBL.brakeTorque = brakeForce;
-                wheelBR.brakeTorque = brakeForce;
-                wheelFL.brakeTorque = brakeForce;
-                wheelFR.brakeTorque = brakeForce;
+                SetWheelsBrakeTorque(brakeForce);
             }
             else
             {
                 ToggleBrakeLights(0);
-                wheelBL.brakeTorque = 0;
-                wheelBR.brakeTorque = 0;
-                wheelFL.brakeTorque = 0;
-                wheelFR.brakeTorque = 0;
+                SetWheelsBrakeTorque(0);
             }
         }
     }
@@ -132,10 +122,7 @@ public class AICar : BaseCar
         {
             brakeZone = null;
             ToggleBrakeLights(0);
-            wheelBL.brakeTorque = 0;
-            wheelBR.brakeTorque = 0;
-            wheelFL.brakeTorque = 0;
-            wheelFR.brakeTorque = 0;
+            SetWheelsBrakeTorque(0);
         }
     }
 }
