@@ -24,6 +24,13 @@ public class BaseCar : MonoBehaviour
         SetWheelVisuals(wheelBL, ref wheelBLVisual);
     }
 
+    protected void SetSteeringAngleFromDirection(Vector3 direction)
+    {
+        var rotation = Quaternion.FromToRotation(transform.forward, direction);
+
+        SetSteeringAngle(rotation.eulerAngles.y);
+    }
+    
     protected void SetSteeringAngle(float angle)
     {
         wheelFR.steerAngle = angle;

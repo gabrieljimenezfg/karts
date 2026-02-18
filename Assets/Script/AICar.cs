@@ -76,14 +76,6 @@ public class AICar : BaseCar
         }
     }
 
-    private void SetSteeringAngleFromDirection(Vector3 direction)
-    {
-        var rotation = Quaternion.FromToRotation(transform.forward, direction);
-
-        wheelFR.steerAngle = rotation.eulerAngles.y;
-        wheelFL.steerAngle = rotation.eulerAngles.y;
-    }
-
     private Vector3 CheckTargetNode()
     {
         Vector3 direction = path.nodes[currentNodeTarget].position - transform.position;
