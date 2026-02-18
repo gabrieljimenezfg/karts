@@ -1,15 +1,19 @@
+using System;
 using UnityEngine;
 
 public class AICar : BaseCar
 {
     [SerializeField] private PathCars path;
     [SerializeField] private float minimumDistanceFromTarget;
+    private Sensor[] sensors;
+    [SerializeField] private float sensorsDistance;
     private int currentNodeTarget;
     private BrakeZone brakeZone;
 
     protected override void Awake()
     {
         base.Awake();
+        sensors = GetComponentsInChildren<Sensor>();
         parMotor = -parMotor;
         currentNodeTarget = 0;
         ToggleBrakeLights(0);
@@ -21,18 +25,64 @@ public class AICar : BaseCar
         wheelBR.motorTorque = parMotor;
 
         var direction = CheckTargetNode();
-        SetWheelAngle(direction);
-
-        SetWheelPositionAndRotation(wheelBR, wheelBRVisual);
-        SetWheelPositionAndRotation(wheelBL, wheelBLVisual);
-        SetWheelPositionAndRotation(wheelFR, wheelFRVisual);
-        SetWheelPositionAndRotation(wheelFL, wheelFLVisual);
+        SetSteeringAngleFromDirection(direction);
+        CheckSensors();
+        SetVisualWheelsPositionAndRotation();
     }
 
-    private void SetWheelAngle(Vector3 direction)
+    private void CheckSensors()
+    {
+        float wheelRotationMultiplier = 0;
+        bool avoiding = false;
+
+        foreach (var sensor in sensors)
+        {
+            var ray = new Ray(sensor.transform.position, sensor.transform.forward);
+            Debug.DrawRay(ray.origin, ray.direction * sensorsDistance, Color.red, 0.1f);
+
+            if (!Physics.Raycast(ray, sensorsDistance)) continue;
+
+            switch (sensor.sensorPosition)
+            {
+                case SensorPosition.FrontLeft:
+                    wheelRotationMultiplier = 1;
+                    avoiding = true;
+                    break;
+                case SensorPosition.FrontLeftDiagonal:
+                    if (avoiding) continue;
+                    avoiding = true;
+                    wheelRotationMultiplier = 0.6f;
+                    break;
+                case SensorPosition.FrontRight:
+                    wheelRotationMultiplier = -1;
+                    avoiding = true;
+                    break;
+                case SensorPosition.FrontRightDiagonal:
+                    if (avoiding) continue;
+                    avoiding = true;
+                    wheelRotationMultiplier = -0.6f;
+                    break;
+
+                case SensorPosition.Front:
+                    break;
+            }
+        }
+
+        if (avoiding)
+        {
+            SetSteeringAngle(maxWheelRotation * wheelRotationMultiplier);
+        }
+    }
+
+    private void SetSteeringAngle(float angle)
+    {
+        wheelFR.steerAngle = angle;
+        wheelFL.steerAngle = angle;
+    }
+
+    private void SetSteeringAngleFromDirection(Vector3 direction)
     {
         var rotation = Quaternion.FromToRotation(transform.forward, direction);
-        Debug.Log(rotation);
 
         wheelFR.steerAngle = rotation.eulerAngles.y;
         wheelFL.steerAngle = rotation.eulerAngles.y;

@@ -46,9 +46,6 @@ public class CarController : BaseCar
         wheelBR.brakeTorque = brakeForce * brake;
         wheelBL.brakeTorque = brakeForce * brake;
 
-        SetWheelPositionAndRotation(wheelBR, wheelBRVisual);
-        SetWheelPositionAndRotation(wheelBL, wheelBLVisual);
-        SetWheelPositionAndRotation(wheelFR, wheelFRVisual);
-        SetWheelPositionAndRotation(wheelFL, wheelFLVisual);
+        SetVisualWheelsPositionAndRotation();
     }
 }

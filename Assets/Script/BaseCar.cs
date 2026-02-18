@@ -42,8 +42,16 @@ public class BaseCar : MonoBehaviour
     {
         wheelVisual = wheelCollider.transform.GetChild(0);
     }
+
+    protected void SetVisualWheelsPositionAndRotation()
+    {
+        SetWheelPositionAndRotation(wheelBR, wheelBRVisual);
+        SetWheelPositionAndRotation(wheelBL, wheelBLVisual);
+        SetWheelPositionAndRotation(wheelFR, wheelFRVisual);
+        SetWheelPositionAndRotation(wheelFL, wheelFLVisual);
+    }
     
-    protected void SetWheelPositionAndRotation(WheelCollider wheelCollider, Transform wheelVisual)
+    private void SetWheelPositionAndRotation(WheelCollider wheelCollider, Transform wheelVisual)
     {
         wheelCollider.GetWorldPose(out var wheelPosition, out var wheelRotation);
         wheelVisual.transform.position = wheelPosition;
