@@ -11,8 +11,11 @@ public class BaseCar : MonoBehaviour
     [SerializeField] protected float parMotor;
     [SerializeField] protected float maxWheelRotation;
     [SerializeField] protected float brakeForce;
+    [SerializeField] protected float maxSpeed;
     protected MeshRenderer meshRenderer;
     protected Rigidbody rb;
+
+    public float MaxSpeed => maxSpeed;
 
     protected virtual void Awake()
     {
@@ -22,6 +25,11 @@ public class BaseCar : MonoBehaviour
         SetWheelVisuals(wheelFL, ref wheelFLVisual);
         SetWheelVisuals(wheelBR, ref wheelBRVisual);
         SetWheelVisuals(wheelBL, ref wheelBLVisual);
+    }
+
+    public float GetCurrentSpeedKmH()
+    {
+        return rb.linearVelocity.magnitude * 3.6f;
     }
 
     protected void SetSteeringAngleFromDirection(Vector3 direction)

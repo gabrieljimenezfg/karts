@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 
 public class CarController : BaseCar
 {
+    public static CarController Instance { get; private set; }
     private const string ACCELERATE_INPUT = "Accelerate";
     private const string STEER_INPUT = "Steer";
     private const string BRAKE_INPUT = "Brake";
@@ -16,6 +17,7 @@ public class CarController : BaseCar
     protected override void Awake()
     {
         base.Awake();
+        Instance = this;
         parMotor = -parMotor;
     }
 
@@ -35,7 +37,15 @@ public class CarController : BaseCar
 
     private void FixedUpdate()
     {
-        SetMotorTorque(parMotor * acceleration);
+        var speedKmH = rb.linearVelocity.magnitude * 3.6f;
+        if (speedKmH < maxSpeed)
+        {
+            SetMotorTorque(parMotor * acceleration);
+        }
+        else
+        {
+            SetMotorTorque(0);
+        }
         SetSteeringAngle(maxWheelRotation * steer);
         SetWheelsBrakeTorque(brakeForce * brake);
         SetVisualWheelsPositionAndRotation();
