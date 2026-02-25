@@ -28,6 +28,7 @@ public class CarController : BaseCar
 
     private void Update()
     {
+        if (!IsGamePlaying) return;
         acceleration = playerInput.actions[ACCELERATE_INPUT].ReadValue<float>();
         steer = playerInput.actions[STEER_INPUT].ReadValue<float>();
         brake = playerInput.actions[BRAKE_INPUT].ReadValue<float>();
@@ -37,6 +38,7 @@ public class CarController : BaseCar
 
     private void FixedUpdate()
     {
+        if (!IsGamePlaying) return;
         var speedKmH = rb.linearVelocity.magnitude * 3.6f;
         if (speedKmH < maxSpeed)
         {

@@ -29,7 +29,6 @@ public class SpeedMeterUI : MonoBehaviour
     private void SetNeedleRotation(float playerSpeed)
     {
         var progress = playerSpeed / maxKmH;
-        Debug.Log(progress);
         var currentNeedleRotation = Mathf.Lerp(minimumRotation, maximumRotation, progress);
         needle.localEulerAngles = new Vector3(0, 0, currentNeedleRotation);
     }

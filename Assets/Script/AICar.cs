@@ -21,6 +21,7 @@ public class AICar : BaseCar
 
     private void FixedUpdate()
     {
+        if (!IsGamePlaying) return;
         SetMotorTorque(parMotor);
         var direction = CheckTargetNode();
         SetSteeringAngleFromDirection(direction);

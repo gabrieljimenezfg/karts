@@ -5,9 +5,13 @@ using UnityEngine;
 
 public class PositionUI : MonoBehaviour
 {
-    [SerializeField]
     private List<CarInfo> cars;
     [SerializeField] private TextMeshProUGUI positionPlayerText;
+
+    private void Start()
+    {
+        cars = CarsManager.Instance.cars;
+    }
 
     private void Update()
     {
@@ -23,7 +27,6 @@ public class PositionUI : MonoBehaviour
         }
 
         positionPlayerText.text = (playerIndex + 1) + "º";
-        Debug.Log(playerIndex);
     }
 
     private void SortCars()

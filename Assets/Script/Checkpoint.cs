@@ -1,10 +1,19 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Checkpoint : MonoBehaviour
 {
+    public static event EventHandler<TimeSpan> PlayerClearedLap;
+
     [SerializeField] private bool isGoal;
     public int checkpointIndex;
+
+    private List<TimeSpan> lapTimes = new List<TimeSpan>();
+    private TimeSpan totalRaceTime;
+    private TimeSpan[] sectorTimes;
+    private DateTime raceStartTime;
+
     // DEBUG
     public int previousCheckpointNeeded;
 
@@ -15,9 +24,37 @@ public class Checkpoint : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent<CarInfo>(out var car))
+        if (!other.TryGetComponent<CarInfo>(out var carInfo)) return;
+        if (carInfo.checkpoint != GetPreviousCheckpoint()) return;
+
+        if (other.TryGetComponent<CarController>(out _))
         {
-            HandleCarInCheckpoint(car);
+            HandlePlayerThroughCheckpoint(carInfo.lap);
+        }
+
+        HandleCarInCheckpoint(carInfo);
+    }
+
+    private void HandlePlayerThroughCheckpoint(int currentCarLap)
+    {
+        if (isGoal)
+        {
+            if (currentCarLap == 0)
+            {
+                raceStartTime = DateTime.Now;
+            }
+            else
+            {
+                var totalLapsTime = TimeSpan.Zero;
+                foreach (var lapTime in lapTimes)
+                {
+                    totalLapsTime += lapTime;
+                }
+
+                var currentLapTime = DateTime.Now - raceStartTime + totalLapsTime;
+                lapTimes.Add(currentLapTime);
+                PlayerClearedLap?.Invoke(this, currentLapTime);
+            }
         }
     }
 
@@ -27,16 +64,12 @@ public class Checkpoint : MonoBehaviour
         {
             return -1;
         }
-        else
-        {
-            return checkpointIndex - 1;
-        }
+
+        return checkpointIndex - 1;
     }
 
     private void HandleCarInCheckpoint(CarInfo car)
     {
-        if (car.checkpoint != GetPreviousCheckpoint()) return;
-
         if (isGoal)
         {
             car.lap++;

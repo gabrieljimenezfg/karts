@@ -5,7 +5,7 @@ public class BaseCar : MonoBehaviour
 {
     private const string EMISSION_VARIABLE = "_EmissionColor";
     private const int BRAKE_LIGHTS_MATERIAL_INDEX = 2;
-    
+
     [SerializeField] protected WheelCollider wheelFR, wheelFL, wheelBR, wheelBL;
     protected Transform wheelFRVisual, wheelFLVisual, wheelBRVisual, wheelBLVisual;
     [SerializeField] protected float parMotor;
@@ -16,6 +16,8 @@ public class BaseCar : MonoBehaviour
     protected Rigidbody rb;
 
     public float MaxSpeed => maxSpeed;
+
+    protected bool IsGamePlaying => CarsManager.Instance.IsGamePlaying();
 
     protected virtual void Awake()
     {
@@ -38,7 +40,7 @@ public class BaseCar : MonoBehaviour
 
         SetSteeringAngle(rotation.eulerAngles.y);
     }
-    
+
     protected void SetSteeringAngle(float angle)
     {
         wheelFR.steerAngle = angle;
@@ -50,7 +52,7 @@ public class BaseCar : MonoBehaviour
         wheelBL.motorTorque = torque;
         wheelBR.motorTorque = torque;
     }
-    
+
     protected void ToggleBrakeLights(float brake)
     {
         var brakeLightMaterial = meshRenderer.materials[BRAKE_LIGHTS_MATERIAL_INDEX];
@@ -85,7 +87,7 @@ public class BaseCar : MonoBehaviour
         wheelFL.brakeTorque = brakingApplied;
         wheelFR.brakeTorque = brakingApplied;
     }
-    
+
     private void SetWheelPositionAndRotation(WheelCollider wheelCollider, Transform wheelVisual)
     {
         wheelCollider.GetWorldPose(out var wheelPosition, out var wheelRotation);
